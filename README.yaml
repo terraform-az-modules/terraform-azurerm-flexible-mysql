@@ -5,13 +5,13 @@
 #
 
 # Name of this project
-name : Terraform Azure Module Template
+name : Terraform Azure Private DNS
 
 # License of this project
 license: "APACHE"
 
 # Canonical GitHub repo
-github_repo: terraform-az-modules/terraform-module-template
+github_repo: terraform-az-modules/terraform-azure-private-dns
 
 # Badges to display
 badges:
@@ -38,7 +38,7 @@ providers:
 
 #  description of this project
 description: |-
-  Terraform Azure Module Template to create new modules using this as baseline
+  Terraform Azure Flexible mysql module is a Terraform module that allows you to create and manage Azure Private DNS zones.
 
 # How to use this project
 # How to use this project

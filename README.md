@@ -26,16 +26,16 @@
 </p>
 <p align="center">
 
-<a href='https://facebook.com/sharer/sharer.php?u=https://github.com/clouddrove/terraform-module-template'>
+<a href='https://facebook.com/sharer/sharer.php?u=https://github.com/clouddrove/terraform-azure-flexible-mysql'>
   <img title="Share on Facebook" src="https://user-images.githubusercontent.com/50652676/62817743-4f64cb80-bb59-11e9-90c7-b057252ded50.png" />
 </a>
 <a href='https://www.instagram.com/cloud_drove?igsh=cHJqaDY3bGtnYmh3' title="Follow On Instagram">
   <img src="https://github.com/gauravghongde/social-icons/blob/master/SVG/Color/Instagram.svg" width="23" height="23" />
 </a>
-<a href='https://www.linkedin.com/shareArticle?mini=true&title=Terraform+Module+Template&url=https://github.com/clouddrove/terraform-module-template'>
+<a href='https://www.linkedin.com/shareArticle?mini=true&title=Terraform+Module+Template&url=https://github.com/clouddrove/terraform-azure-flexible-mysql'>
   <img title="Share on LinkedIn" src="https://user-images.githubusercontent.com/50652676/62817742-4e339e80-bb59-11e9-87b9-a1f68cae1049.png" />
 </a>
-<a href='https://twitter.com/intent/tweet/?text=Terraform+Module+Template&url=https://github.com/clouddrove/terraform-module-template'>
+<a href='https://twitter.com/intent/tweet/?text=Terraform+Module+Template&url=https://github.com/clouddrove/terraform-azure-flexible-mysql'>
   <img title="Share on Twitter" src="https://user-images.githubusercontent.com/50652676/62817740-4c69db00-bb59-11e9-8a79-3580fbbf6d5c.png" />
 </a>
 
@@ -57,35 +57,123 @@ This table contains both Prerequisites and Providers:
 | Description   | Name                                       | Version   |
 |:-------------:|:-------------------------------------------:|:---------:|
 | **Prerequisite** | [Terraform](https://learn.hashicorp.com/terraform/getting-started/install.html) | >= 1.6.6 |
-| **Provider** | [azure](https://azure.microsoft.com/) | >= 3.90.0 |
-
-
+| **Provider** | [azure](https://azure.microsoft.com/) | >= 3.116.0 |
 
 
 
 ## Examples
 
-**IMPORTANT:** Since the master branch used in source varies based on new modifications, we recommend using the [release versions](https://github.com/terraform-az-modules/terraform-module-template/releases).
+**IMPORTANT:** Since the master branch used in source varies based on new modifications, we recommend using the [release versions](https://github.com/terraform-az-modules/terraform-azure-flexible-mysql/releases).
 
 📌 For additional usage examples, check the complete list under [`examples/`](./examples) directory.
 
 
+## Providers
 
-## Inputs and Outputs
+| Name | Version |
+|------|---------|
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >=3.116.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | n/a |
 
-### Inputs
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_labels"></a> [labels](#module\_labels) | terraform-az-modules/tags/azure | 1.0.0 |
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [azurerm_key_vault_access_policy.geo_cmk_access_policy](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_access_policy) | resource |
+| [azurerm_key_vault_access_policy.primary_cmk_access_policy](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_access_policy) | resource |
+| [azurerm_key_vault_key.geo_cmk_key](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_key) | resource |
+| [azurerm_key_vault_key.primary_cmk_key](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_key) | resource |
+| [azurerm_monitor_diagnostic_setting.mysql](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_diagnostic_setting) | resource |
+| [azurerm_mysql_flexible_database.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/mysql_flexible_database) | resource |
+| [azurerm_mysql_flexible_server.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/mysql_flexible_server) | resource |
+| [azurerm_mysql_flexible_server_active_directory_administrator.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/mysql_flexible_server_active_directory_administrator) | resource |
+| [azurerm_mysql_flexible_server_configuration.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/mysql_flexible_server_configuration) | resource |
+| [azurerm_role_assignment.geo_cmk_role_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
+| [azurerm_role_assignment.primary_cmk_role_assignment](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
+| [azurerm_user_assigned_identity.geo_cmk_umi](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity) | resource |
+| [azurerm_user_assigned_identity.primary_cmk_umi](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity) | resource |
+| [random_password.main](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
+| [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) | data source |
+
+## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| label_order | Label order, e.g. `name`,`application`,`centralus`. | `list(any)` | <pre>["name","environment",  "location"]</pre> | no |
+| <a name="input_admin_password"></a> [admin\_password](#input\_admin\_password) | Password for the administrator login user. | `string` | `null` | no |
+| <a name="input_admin_password_length"></a> [admin\_password\_length](#input\_admin\_password\_length) | Length of the randomly generated admin password, if not provided. | `number` | `16` | no |
+| <a name="input_admin_username"></a> [admin\_username](#input\_admin\_username) | Administrator login name for the MySQL Flexible Server. | `string` | `null` | no |
+| <a name="input_auto_grow_enabled"></a> [auto\_grow\_enabled](#input\_auto\_grow\_enabled) | Enable storage auto-grow (default disabled). | `bool` | `false` | no |
+| <a name="input_backup_retention_days"></a> [backup\_retention\_days](#input\_backup\_retention\_days) | Backup retention days for MySQL Flexible Server (1-35). | `number` | `7` | no |
+| <a name="input_charset"></a> [charset](#input\_charset) | Charset for the MySQL database. | `string` | `""` | no |
+| <a name="input_cmk_enabled"></a> [cmk\_enabled](#input\_cmk\_enabled) | Enable Customer Managed Key (CMK) for encryption. | `bool` | `false` | no |
+| <a name="input_cmk_key_size"></a> [cmk\_key\_size](#input\_cmk\_key\_size) | Key size for CMK encryption. | `number` | `2048` | no |
+| <a name="input_cmk_key_type"></a> [cmk\_key\_type](#input\_cmk\_key\_type) | Key type for CMK encryption ('RSA' by default). | `string` | `"RSA"` | no |
+| <a name="input_collation"></a> [collation](#input\_collation) | Collation for the MySQL database. | `string` | `""` | no |
+| <a name="input_create_mode"></a> [create\_mode](#input\_create\_mode) | Creation mode (Default, Replica, GeoRestore, PointInTimeRestore). | `string` | `"Default"` | no |
+| <a name="input_custom_name"></a> [custom\_name](#input\_custom\_name) | Override the default naming convention. | `string` | `null` | no |
+| <a name="input_custom_tags"></a> [custom\_tags](#input\_custom\_tags) | Map of custom tags to apply to resources. | `map(string)` | `{}` | no |
+| <a name="input_db_name"></a> [db\_name](#input\_db\_name) | MySQL Database name; must be a valid identifier. | `string` | `""` | no |
+| <a name="input_delegated_subnet_id"></a> [delegated\_subnet\_id](#input\_delegated\_subnet\_id) | Resource ID of the delegated subnet. | `string` | `""` | no |
+| <a name="input_deployment_mode"></a> [deployment\_mode](#input\_deployment\_mode) | Specifies infrastructure deployment mode. | `string` | `"terraform"` | no |
+| <a name="input_enable_diagnostic"></a> [enable\_diagnostic](#input\_enable\_diagnostic) | Enable diagnostic settings creation. | `bool` | `true` | no |
+| <a name="input_enabled"></a> [enabled](#input\_enabled) | Set to false to disable resource creation by this module. | `bool` | `true` | no |
+| <a name="input_entra_authentication"></a> [entra\_authentication](#input\_entra\_authentication) | Azure Entra authentication configuration for MySQL Flexible Server. | <pre>object({<br>    user_assigned_identity_id = optional(string, null)<br>    login                     = optional(string, null)<br>    object_id                 = optional(string, null)<br>  })</pre> | `{}` | no |
+| <a name="input_environment"></a> [environment](#input\_environment) | Deployment environment, such as 'prod', 'dev', or 'staging'. | `string` | `null` | no |
+| <a name="input_eventhub_authorization_rule_id"></a> [eventhub\_authorization\_rule\_id](#input\_eventhub\_authorization\_rule\_id) | EventHub authorization rule ID for diagnostic settings destination. | `string` | `null` | no |
+| <a name="input_eventhub_name"></a> [eventhub\_name](#input\_eventhub\_name) | EventHub name for diagnostic settings destination. | `string` | `null` | no |
+| <a name="input_existing_private_dns_zone"></a> [existing\_private\_dns\_zone](#input\_existing\_private\_dns\_zone) | Set to true if using an existing private DNS zone. | `bool` | `false` | no |
+| <a name="input_existing_private_dns_zone_id"></a> [existing\_private\_dns\_zone\_id](#input\_existing\_private\_dns\_zone\_id) | ID of the existing private DNS zone. | `string` | `null` | no |
+| <a name="input_existing_private_dns_zone_name"></a> [existing\_private\_dns\_zone\_name](#input\_existing\_private\_dns\_zone\_name) | Name of the existing private DNS zone (no trailing dot). Changing forces replacement. | `string` | `null` | no |
+| <a name="input_extra_tags"></a> [extra\_tags](#input\_extra\_tags) | Additional tags to apply to resources. | `map(string)` | `null` | no |
+| <a name="input_geo_redundant_backup_enabled"></a> [geo\_redundant\_backup\_enabled](#input\_geo\_redundant\_backup\_enabled) | Enable geo redundant backups. Changing this triggers resource replacement. | `bool` | `true` | no |
+| <a name="input_high_availability"></a> [high\_availability](#input\_high\_availability) | High availability configuration object. Set to null to disable. | <pre>object({<br>    mode                      = string<br>    standby_availability_zone = optional(number)<br>  })</pre> | `null` | no |
+| <a name="input_identity_type"></a> [identity\_type](#input\_identity\_type) | Managed identity type to assign (e.g., 'SystemAssigned', 'UserAssigned'). | `string` | `null` | no |
+| <a name="input_iops"></a> [iops](#input\_iops) | Storage IOPS; valid range 360 to 20000. | `number` | `360` | no |
+| <a name="input_key_opts"></a> [key\_opts](#input\_key\_opts) | List of permitted key operations for CMK. | `list(string)` | <pre>[<br>  "encrypt",<br>  "decrypt",<br>  "sign",<br>  "verify",<br>  "wrapKey",<br>  "unwrapKey"<br>]</pre> | no |
+| <a name="input_key_permissions"></a> [key\_permissions](#input\_key\_permissions) | List of key permissions granted for CMK. | `list(string)` | <pre>[<br>  "Get",<br>  "WrapKey",<br>  "UnwrapKey",<br>  "List"<br>]</pre> | no |
+| <a name="input_key_vault_id"></a> [key\_vault\_id](#input\_key\_vault\_id) | Key Vault resource ID where the CMK is stored. | `string` | `null` | no |
+| <a name="input_key_vault_with_rbac"></a> [key\_vault\_with\_rbac](#input\_key\_vault\_with\_rbac) | Enable RBAC permissions on the Key Vault. | `bool` | `false` | no |
+| <a name="input_label_order"></a> [label\_order](#input\_label\_order) | Order of labels for constructing resource names or tags. | `list(string)` | <pre>[<br>  "name",<br>  "environment",<br>  "location"<br>]</pre> | no |
+| <a name="input_location"></a> [location](#input\_location) | Azure Region where the resource will be created. Changing this forces resource replacement. | `string` | `"centralindia"` | no |
+| <a name="input_log_analytics_destination_type"></a> [log\_analytics\_destination\_type](#input\_log\_analytics\_destination\_type) | Destination type for logs; 'AzureDiagnostics' or 'Dedicated'. | `string` | `"AzureDiagnostics"` | no |
+| <a name="input_log_analytics_workspace_id"></a> [log\_analytics\_workspace\_id](#input\_log\_analytics\_workspace\_id) | Log Analytics workspace ID where logs will be sent. | `string` | `null` | no |
+| <a name="input_log_category"></a> [log\_category](#input\_log\_category) | List of log categories to collect (e.g., 'MySqlSlowLogs', 'MySqlAuditLogs'). | `list(string)` | <pre>[<br>  "MySqlAuditLogs"<br>]</pre> | no |
+| <a name="input_main_rg_name"></a> [main\_rg\_name](#input\_main\_rg\_name) | Primary resource group name. | `string` | `""` | no |
+| <a name="input_managedby"></a> [managedby](#input\_managedby) | 'ManagedBy' tag value, e.g., 'terraform-az-modules'. | `string` | `"terraform-az-modules"` | no |
+| <a name="input_metric_enabled"></a> [metric\_enabled](#input\_metric\_enabled) | Enable metrics diagnostics for MySQL Flexible Server. | `bool` | `true` | no |
+| <a name="input_mysql_server_name"></a> [mysql\_server\_name](#input\_mysql\_server\_name) | Name of the MySQL Flexible Server. | `string` | `null` | no |
+| <a name="input_mysql_version"></a> [mysql\_version](#input\_mysql\_version) | MySQL version; valid values are '5.7' or '8.0.21'. Changing forces replacement. | `string` | `"5.7"` | no |
+| <a name="input_name"></a> [name](#input\_name) | Name label (e.g., 'app' or 'cluster'). | `string` | `null` | no |
+| <a name="input_point_in_time_restore_time_in_utc"></a> [point\_in\_time\_restore\_time\_in\_utc](#input\_point\_in\_time\_restore\_time\_in\_utc) | Point in time to restore from when using 'PointInTimeRestore' mode. | `string` | `null` | no |
+| <a name="input_private_dns"></a> [private\_dns](#input\_private\_dns) | Enable private DNS integration. | `bool` | `false` | no |
+| <a name="input_registration_enabled"></a> [registration\_enabled](#input\_registration\_enabled) | Enable auto-registration of VM records in the Private DNS zone. | `bool` | `false` | no |
+| <a name="input_replication_role"></a> [replication\_role](#input\_replication\_role) | Replication role for the MySQL Flexible Server (e.g., 'None'). | `string` | `null` | no |
+| <a name="input_repository"></a> [repository](#input\_repository) | Module source repository URL. | `string` | `"https://github.com/terraform-az-modules/terraform-azure-vnet"` | no |
+| <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | Resource group name where MySQL Flexible Server is deployed. | `string` | `""` | no |
+| <a name="input_resource_position_prefix"></a> [resource\_position\_prefix](#input\_resource\_position\_prefix) | Controls placement of the resource type keyword (e.g., "vnet", "ddospp") in resource names.<br><br>- If true, the keyword is prepended: "vnet-core-dev".<br>- If false, the keyword is appended: "core-dev-vnet".<br><br>Maintains naming consistency based on organizational preferences. | `bool` | `true` | no |
+| <a name="input_role_definition_name"></a> [role\_definition\_name](#input\_role\_definition\_name) | Name of the Role Definition assigned for Key Vault crypto operations. | `string` | `"Key Vault Crypto Service Encryption User"` | no |
+| <a name="input_server_configuration_names"></a> [server\_configuration\_names](#input\_server\_configuration\_names) | List of MySQL server configuration option names. | `list(string)` | `[]` | no |
+| <a name="input_size_gb"></a> [size\_gb](#input\_size\_gb) | Maximum storage size in GB; valid range 20 to 16,384. | `string` | `"20"` | no |
+| <a name="input_sku_name"></a> [sku\_name](#input\_sku\_name) | SKU name for the MySQL Flexible Server. | `string` | `"GP_Standard_D8ds_v4"` | no |
+| <a name="input_source_server_id"></a> [source\_server\_id](#input\_source\_server\_id) | Source server ID for restore or replication modes. | `string` | `null` | no |
+| <a name="input_storage_account_id"></a> [storage\_account\_id](#input\_storage\_account\_id) | Storage Account ID for diagnostic settings destination. | `string` | `null` | no |
+| <a name="input_user_assigned_identity_ids"></a> [user\_assigned\_identity\_ids](#input\_user\_assigned\_identity\_ids) | List of User-Assigned Managed Identity IDs. | `list(string)` | `[]` | no |
+| <a name="input_values"></a> [values](#input\_values) | List of values corresponding to server configuration names. | `list(string)` | `[]` | no |
+| <a name="input_virtual_network_id"></a> [virtual\_network\_id](#input\_virtual\_network\_id) | Virtual network resource ID. | `string` | `""` | no |
+| <a name="input_zone"></a> [zone](#input\_zone) | Availability Zone for the server (1, 2, or 3). | `number` | `null` | no |
 
-### Outputs
+## Outputs
 
 | Name | Description |
 |------|-------------|
-| label_order | Label order, e.g. `name`,`application`,`centralus`. |
-
-
+| <a name="output_azurerm_mysql_flexible_server_configuration_id"></a> [azurerm\_mysql\_flexible\_server\_configuration\_id](#output\_azurerm\_mysql\_flexible\_server\_configuration\_id) | The ID of the MySQL Flexible Server Configuration. |
+| <a name="output_mysql_flexible_server_id"></a> [mysql\_flexible\_server\_id](#output\_mysql\_flexible\_server\_id) | The ID of the MySQL Flexible Server. |
 
 <!-- 
 ## Module Dependencies
