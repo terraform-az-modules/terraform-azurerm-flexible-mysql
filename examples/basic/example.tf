@@ -1,30 +1,31 @@
 provider "azurerm" {
   features {}
 }
+
 ##-----------------------------------------------------------------------------
 ## Flexible Mysql server module call.
 ##-----------------------------------------------------------------------------
 module "flexible-mysql" {
   source              = "../../"
-  name                = var.name
-  environment         = var.environment
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  virtual_network_id  = var.virtual_network_id
-  delegated_subnet_id = var.delegated_subnet_id
-  mysql_version       = var.mysql_version
-  private_dns         = var.private_dns
-  zone                = var.zone
-  admin_username      = var.admin_username
-  admin_password      = var.admin_password
-  sku_name            = var.sku_name
-  db_name             = var.db_name
-  charset             = var.charset
-  collation           = var.collation
-  auto_grow_enabled   = var.auto_grow_enabled
-  iops                = var.iops
-  size_gb             = var.size_gb
-  ## azurerm_mysql_flexible_server_configuration
-  server_configuration_names = var.server_configuration_names
-  values                     = var.values
+  name                = "app"
+  environment         = "test"
+  resource_group_name = "test-rg"
+  location            = "Central India"
+  virtual_network_id  = "/subscriptions/---------------<vnet_id>---------------"
+  delegated_subnet_id = "/subscriptions/---------------<delegated_subnet_id>---------------"
+  mysql_version       = "8.0.21"
+  private_dns         = true
+  zone                = "1"
+  admin_username      = "mysqlusername"
+  admin_password      = "ba5yatgfgfhdsv6A3ns2lu4gqzzc"
+  sku_name            = "GP_Standard_D8ds_v4"
+  db_name             = "maindb"
+  charset             = "utf8mb3"
+  collation           = "utf8mb3_unicode_ci"
+  auto_grow_enabled   = true
+  iops                = 360
+  size_gb             = "20"
+  ##azurerm_mysql_flexible_server_configuration
+  server_configuration_names = ["interactive_timeout", "audit_log_enabled"]
+  values                     = ["600", "ON"]
 }

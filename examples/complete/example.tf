@@ -13,7 +13,7 @@ module "resource_group" {
   version     = "1.0.0"
   name        = "core"
   environment = "dev"
-  location    = "centralus"
+  location    = "canadacentral"
   label_order = ["name", "environment", "location"]
 }
 
@@ -46,6 +46,21 @@ module "subnet" {
     {
       name            = "subnet1"
       subnet_prefixes = ["10.0.1.0/24"]
+      delegations = [
+        {
+          name = "delegation1"
+          service_delegations = [
+            {
+              name    = "Microsoft.DBforMySQL/flexibleServers"
+              actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      name            = "subnet2"
+      subnet_prefixes = ["10.0.2.0/24"]
     }
   ]
 }
@@ -71,12 +86,12 @@ module "log-analytics" {
 module "vault" {
   source                        = "terraform-az-modules/key-vault/azure"
   version                       = "1.0.0"
-  name                          = "core"
+  name                          = "coreuse"
   environment                   = "dev"
   label_order                   = ["name", "environment", "location"]
   resource_group_name           = module.resource_group.resource_group_name
   location                      = module.resource_group.resource_group_location
-  subnet_id                     = module.subnet.subnet_ids.subnet1
+  subnet_id                     = module.subnet.subnet_ids.subnet2
   public_network_access_enabled = true
   sku_name                      = "premium"
   private_dns_zone_ids          = module.private_dns.private_dns_zone_ids.key_vault
@@ -102,8 +117,8 @@ module "private_dns" {
   source              = "terraform-az-modules/private-dns/azure"
   version             = "1.0.0"
   location            = module.resource_group.resource_group_location
-  name                = "dns"
-  environment         = "dev"
+  name                = "dnssse"
+  environment         = "devlop"
   resource_group_name = module.resource_group.resource_group_name
   private_dns_config = [
     {
@@ -125,29 +140,26 @@ module "flexible-mysql" {
   source                     = "../../"
   name                       = "core"
   environment                = "dev"
-  label_order                = ["name", "environment", "location"]
   resource_group_name        = module.resource_group.resource_group_name
   location                   = module.resource_group.resource_group_location
-  virtual_network_id         = module.vnet.vnet_id[0]
-  delegated_subnet_id        = module.subnet.subnet_ids["subnet1"]
-  mysql_version              = var.mysql_version
-  private_dns                = var.private_dns
-  zone                       = var.zone
-  admin_username             = var.admin_username
-  admin_password             = var.admin_password
-  sku_name                   = var.sku_name
-  db_name                    = var.db_name
-  charset                    = var.charset
-  collation                  = var.collation
-  auto_grow_enabled          = var.auto_grow_enabled
-  iops                       = var.iops
-  size_gb                    = var.size_gb
-  server_configuration_names = var.server_configuration_names
-  values                     = var.values
-
+  virtual_network_id         = module.vnet.vnet_id
+  delegated_subnet_id        = module.subnet.subnet_ids.subnet1
+  mysql_version              = "8.0.21"
+  private_dns                = true
+  zone                       = "1"
+  admin_username             = "mysqlusername"
+  admin_password             = "ba5yatgfgfhdsv6A3ns2lu4gqzzc"
+  sku_name                   = "GP_Standard_D8ds_v4"
+  db_name                    = "maindb"
+  charset                    = "utf8mb3"
+  collation                  = "utf8mb3_unicode_ci"
+  auto_grow_enabled          = true
+  iops                       = 360
+  size_gb                    = "20"
+  server_configuration_names = ["interactive_timeout", "audit_log_enabled", "audit_log_events"]
+  values                     = ["600", "ON", "CONNECTION,ADMIN,DDL,TABLE_ACCESS"]
   log_analytics_workspace_id = module.log-analytics.workspace_id
   key_vault_id               = module.vault.id
   key_vault_with_rbac        = true
   cmk_enabled                = true
-  existing_private_dns_zone  = module.private_dns.private_dns_zone_ids.mysql_server
 }

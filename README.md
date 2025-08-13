@@ -201,8 +201,8 @@ Refer [here](CHANGELOG.md).
 
 Big thanks to our contributors for elevating our project with their dedication and expertise! But, we do not wish to stop there, would like to invite contributions from the community in improving these projects and making them more versatile for better reach. Remember, every bit of contribution is immensely valuable, as, together, we are moving in only 1 direction, i.e. forward. 
 
-<a href="https://github.com/terraform-az-modules/terraform-azure-module-template/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=terraform-az-modules/terraform-azure-module-template&max" />
+<a href="https://github.com/terraform-az-modules/terraform-azure-flexible-mysql/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=terraform-az-modules/terraform-azure-flexible-mysql&max" />
 </a>
 <br>
 <br>
@@ -217,9 +217,9 @@ Big thanks to our contributors for elevating our project with their dedication a
 
 
 ## Feedback 
-Spot a bug or have thoughts to share with us? Let's squash it together! Log it in our [issue tracker](https://github.com/terraform-az-modules/terraform-azure-module-template/issues), feel free to drop us an email at [hello@clouddrove.com](hello@clouddrove.com)).
+Spot a bug or have thoughts to share with us? Let's squash it together! Log it in our [issue tracker](https://github.com/terraform-az-modules/terraform-azure-flexible-mysql/issues), feel free to drop us an email at [hello@clouddrove.com](hello@clouddrove.com)).
 
-Show some love with a ★ on [our GitHub](https://github.com/terraform-az-modules/terraform-azure-module-template)!  if our work has brightened your day! – your feedback fuels our journey!
+Show some love with a ★ on [our GitHub](https://github.com/terraform-az-modules/terraform-azure-flexible-mysql)!  if our work has brightened your day! – your feedback fuels our journey!
 
 
 ## :rocket: Our Accomplishment

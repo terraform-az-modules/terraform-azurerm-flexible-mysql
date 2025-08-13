@@ -20,7 +20,6 @@ module "labels" {
 ## Random Password Resource.
 ## Will be passed as admin password of mysql server when admin password is not passed manually as variable.
 ##-----------------------------------------------------------------------------
-
 resource "random_password" "main" {
   count       = var.admin_password == null ? 1 : 0
   length      = var.admin_password_length
@@ -34,15 +33,14 @@ resource "random_password" "main" {
 ## Below resource will create flexible MySQL server in Azure environment.
 ##-----------------------------------------------------------------------------
 resource "azurerm_mysql_flexible_server" "main" {
-  count                  = var.enabled ? 1 : 0
-  name                   = var.mysql_server_name != null ? var.mysql_server_name : format("%s-mysql-flexible-server", module.labels.id)
-  resource_group_name    = var.resource_group_name
-  location               = var.location
-  administrator_login    = var.admin_username
-  administrator_password = var.admin_password == null ? random_password.main[0].result : var.admin_password
-  backup_retention_days  = var.backup_retention_days
-  delegated_subnet_id    = var.delegated_subnet_id
-  # private_dns_zone_id              = var.private_dns ? azurerm_private_dns_zone.main[0].id : var.existing_private_dns_zone_id
+  count                             = var.enabled ? 1 : 0
+  name                              = var.mysql_server_name != null ? var.mysql_server_name : format("%s-mysql-flexible-server", module.labels.id)
+  resource_group_name               = var.resource_group_name
+  location                          = var.location
+  administrator_login               = var.admin_username
+  administrator_password            = var.admin_password == null ? random_password.main[0].result : var.admin_password
+  backup_retention_days             = var.backup_retention_days
+  delegated_subnet_id               = var.delegated_subnet_id
   private_dns_zone_id               = var.existing_private_dns_zone_id
   sku_name                          = var.sku_name
   create_mode                       = var.create_mode
@@ -93,11 +91,9 @@ resource "azurerm_mysql_flexible_server" "main" {
       geo_backup_user_assigned_identity_id = var.geo_redundant_backup_enabled ? azurerm_user_assigned_identity.geo_cmk_umi[0].id : null
     }
   }
-
   version = var.mysql_version
   zone    = var.zone
-
-  tags = var.custom_tags == null ? module.labels.tags : var.custom_tags
+  tags    = var.custom_tags == null ? module.labels.tags : var.custom_tags
 }
 
 ##-----------------------------------------------------------------------------
@@ -157,11 +153,10 @@ resource "azurerm_monitor_diagnostic_setting" "mysql" {
     }
   }
 
-  dynamic "metric" {
+  dynamic "enabled_metric" {
     for_each = var.metric_enabled ? ["AllMetrics"] : []
     content {
-      category = metric.value
-      enabled  = true
+      category = enabled_metric.value
     }
   }
 }
@@ -174,6 +169,7 @@ resource "azurerm_user_assigned_identity" "primary_cmk_umi" {
   name                = format("%s-cmk-primary-identity", module.labels.id)
   resource_group_name = var.resource_group_name
   location            = var.location
+  tags                = module.labels.tags
 }
 
 ##-----------------------------------------------------------------------------
@@ -186,6 +182,7 @@ resource "azurerm_key_vault_key" "primary_cmk_key" {
   key_type     = var.cmk_key_type
   key_size     = var.cmk_key_size
   key_opts     = var.key_opts
+  tags         = module.labels.tags
 }
 
 ##-----------------------------------------------------------------------------
@@ -198,4 +195,5 @@ resource "azurerm_key_vault_key" "geo_cmk_key" {
   key_type     = var.cmk_key_type
   key_size     = var.cmk_key_size
   key_opts     = var.key_opts
+  tags         = module.labels.tags
 }

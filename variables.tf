@@ -33,13 +33,13 @@ variable "name" {
 
 variable "environment" {
   type        = string
-  default     = null
+  default     = "dev"
   description = "Deployment environment, such as 'prod', 'dev', or 'staging'."
 }
 
 variable "location" {
   type        = string
-  default     = "centralindia"
+  default     = "canadacentral"
   description = "Azure Region where the resource will be created. Changing this forces resource replacement."
 }
 
@@ -102,14 +102,15 @@ variable "registration_enabled" {
 
 variable "admin_username" {
   type        = string
-  default     = null
-  description = "Administrator login name for the MySQL Flexible Server."
+  default     = "mysqlusername"
+  description = "The administrator username for the MySQL server."
 }
 
 variable "admin_password" {
   type        = string
-  default     = null
-  description = "Password for the administrator login user."
+  default     = "ba5yatgfgfhdsv6A3ns2lu4gqzzc"
+  sensitive   = true
+  description = "The administrator password for the MySQL server (sensitive value)."
 }
 
 variable "admin_password_length" {
@@ -133,7 +134,7 @@ variable "delegated_subnet_id" {
 variable "sku_name" {
   type        = string
   default     = "GP_Standard_D8ds_v4"
-  description = "SKU name for the MySQL Flexible Server."
+  description = "The SKU name defining the size and performance tier of the MySQL server."
 }
 
 variable "create_mode" {
@@ -156,13 +157,13 @@ variable "replication_role" {
 
 variable "mysql_version" {
   type        = string
-  default     = "5.7"
-  description = "MySQL version; valid values are '5.7' or '8.0.21'. Changing forces replacement."
+  default     = "8.0.21"
+  description = "The version of the MySQL server to deploy."
 }
 
 variable "zone" {
   type        = number
-  default     = null
+  default     = 1
   description = "Availability Zone for the server (1, 2, or 3)."
 }
 
@@ -190,12 +191,6 @@ variable "private_dns" {
   description = "Enable private DNS integration."
 }
 
-variable "main_rg_name" {
-  type        = string
-  default     = ""
-  description = "Primary resource group name."
-}
-
 variable "resource_group_name" {
   type        = string
   default     = ""
@@ -208,58 +203,58 @@ variable "existing_private_dns_zone_id" {
   description = "ID of the existing private DNS zone."
 }
 
-variable "existing_private_dns_zone_name" {
-  type        = string
-  default     = null
-  description = "Name of the existing private DNS zone (no trailing dot). Changing forces replacement."
-}
+# variable "existing_private_dns_zone_name" {
+#   type        = string
+#   default     = null
+#   description = "Name of the existing private DNS zone (no trailing dot). Changing forces replacement."
+# }
 
 variable "auto_grow_enabled" {
   type        = bool
   default     = false
-  description = "Enable storage auto-grow (default disabled)."
+  description = "Enable or disable automatic storage growth for the database."
 }
 
 variable "iops" {
   type        = number
   default     = 360
-  description = "Storage IOPS; valid range 360 to 20000."
+  description = "The number of Input/Output Operations Per Second (IOPS) provisioned for the storage."
 }
 
 variable "size_gb" {
   type        = string
   default     = "20"
-  description = "Maximum storage size in GB; valid range 20 to 16,384."
-}
-
-variable "db_name" {
-  type        = string
-  default     = ""
-  description = "MySQL Database name; must be a valid identifier."
-}
-
-variable "charset" {
-  type        = string
-  default     = ""
-  description = "Charset for the MySQL database."
-}
-
-variable "collation" {
-  type        = string
-  default     = ""
-  description = "Collation for the MySQL database."
+  description = "The size of the MySQL server disk storage in gigabytes."
 }
 
 variable "server_configuration_names" {
   type        = list(string)
-  default     = []
-  description = "List of MySQL server configuration option names."
+  default     = ["interactive_timeout", "audit_log_enabled", "audit_log_events"]
+  description = "List of MySQL server configuration parameters to be set."
 }
 
 variable "values" {
   type        = list(string)
-  default     = []
-  description = "List of values corresponding to server configuration names."
+  default     = ["600", "ON", "CONNECTION,ADMIN,DDL,TABLE_ACCESS"]
+  description = "Corresponding values for the server configuration parameters."
+}
+
+variable "db_name" {
+  type        = string
+  default     = "maindb"
+  description = "The name of the default database to be created on the MySQL server."
+}
+
+variable "charset" {
+  type        = string
+  default     = "utf8mb3"
+  description = "The character set to use by default on the MySQL database."
+}
+
+variable "collation" {
+  type        = string
+  default     = "utf8mb3_unicode_ci"
+  description = "The collation setting for the MySQL database."
 }
 
 variable "high_availability" {
@@ -351,7 +346,7 @@ variable "key_vault_with_rbac" {
 
 variable "custom_tags" {
   type        = map(string)
-  default     = {}
+  default     = null
   description = "Map of custom tags to apply to resources."
 }
 
