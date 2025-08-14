@@ -328,7 +328,7 @@ variable "key_vault_id" {
 
 variable "cmk_key_type" {
   type        = string
-  default     = "RSA"
+  default     = "RSA-HSM"
   description = "Key type for CMK encryption ('RSA' by default)."
 }
 
@@ -336,6 +336,12 @@ variable "cmk_key_size" {
   type        = number
   default     = 2048
   description = "Key size for CMK encryption."
+}
+
+variable "expiration_date" {
+  description = "Expiration date for the Key Vault key (RFC3339 format: YYYY-MM-DDThh:mm:ssZ)"
+  type        = string
+  default     = "2025-12-31T23:59:59Z"
 }
 
 variable "key_vault_with_rbac" {
@@ -396,3 +402,14 @@ variable "role_definition_name" {
   description = "Name of the Role Definition assigned for Key Vault crypto operations."
 }
 
+variable "subnet_id" {
+  type    = string
+  default = null
+  description = "value"
+}
+
+variable "private_dns_zone_ids" {
+  type    = string
+  default = null
+  description = "value"
+}

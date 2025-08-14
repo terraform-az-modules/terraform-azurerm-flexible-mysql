@@ -96,6 +96,27 @@ resource "azurerm_mysql_flexible_server" "main" {
   tags    = var.custom_tags == null ? module.labels.tags : var.custom_tags
 }
 
+#--------------------------------
+resource "azurerm_private_endpoint" "example" {
+  name                = format("%s-pe", azurerm_mysql_flexible_server.main[0].name)
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  subnet_id           = var.subnet_id
+
+  private_service_connection {
+    name                           = format("%s-pe-serviceconnection", azurerm_mysql_flexible_server.main[0].name)
+    private_connection_resource_id = azurerm_mysql_flexible_server.main[0].id
+    subresource_names              = ["mysqlServer"]
+    is_manual_connection           = false
+  }
+
+  private_dns_zone_group {
+    name                 = "mysqlserver-dns-zone-group"
+    private_dns_zone_ids = [var.private_dns_zone_ids]
+  }
+}
+#----------------------------------
+
 ##-----------------------------------------------------------------------------
 ## Below resource will create MySQL server Active Directory administrator.
 ##-----------------------------------------------------------------------------
@@ -176,24 +197,26 @@ resource "azurerm_user_assigned_identity" "primary_cmk_umi" {
 ## Below resource will create primary Customer Managed Key (CMK) key vault key.
 ##-----------------------------------------------------------------------------
 resource "azurerm_key_vault_key" "primary_cmk_key" {
-  count        = var.cmk_enabled ? 1 : 0
-  name         = format("%s-cmk-key", module.labels.id)
-  key_vault_id = var.key_vault_id
-  key_type     = var.cmk_key_type
-  key_size     = var.cmk_key_size
-  key_opts     = var.key_opts
-  tags         = module.labels.tags
+  count           = var.cmk_enabled ? 1 : 0
+  name            = format("%s-cmk-key", module.labels.id)
+  key_vault_id    = var.key_vault_id
+  key_type        = var.cmk_key_type
+  key_size        = var.cmk_key_size
+  key_opts        = var.key_opts
+  expiration_date = var.expiration_date
+  tags            = module.labels.tags
 }
 
 ##-----------------------------------------------------------------------------
 ## Below resource will create geo-redundant Customer Managed Key (CMK) key vault key.
 ##-----------------------------------------------------------------------------
 resource "azurerm_key_vault_key" "geo_cmk_key" {
-  count        = var.geo_redundant_backup_enabled && var.cmk_enabled ? 1 : 0
-  name         = format("%s-geo-cmk-key", module.labels.id)
-  key_vault_id = var.key_vault_id
-  key_type     = var.cmk_key_type
-  key_size     = var.cmk_key_size
-  key_opts     = var.key_opts
-  tags         = module.labels.tags
+  count           = var.geo_redundant_backup_enabled && var.cmk_enabled ? 1 : 0
+  name            = format("%s-geo-cmk-key", module.labels.id)
+  key_vault_id    = var.key_vault_id
+  key_type        = var.cmk_key_type
+  key_size        = var.cmk_key_size
+  key_opts        = var.key_opts
+  expiration_date = var.expiration_date
+  tags            = module.labels.tags
 }

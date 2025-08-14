@@ -162,4 +162,6 @@ module "flexible-mysql" {
   key_vault_id               = module.vault.id
   key_vault_with_rbac        = true
   cmk_enabled                = true
+  subnet_id                  = module.subnet.subnet_ids.subnet2
+  private_dns_zone_ids       = module.private_dns.private_dns_zone_ids.mysql_server
 }
