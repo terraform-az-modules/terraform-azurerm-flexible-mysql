@@ -403,13 +403,13 @@ variable "role_definition_name" {
 }
 
 variable "subnet_id" {
-  type    = string
-  default = null
+  type        = string
+  default     = null
   description = "value"
 }
 
 variable "private_dns_zone_ids" {
-  type    = string
-  default = null
+  type        = string
+  default     = null
   description = "value"
 }
