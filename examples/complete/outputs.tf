@@ -20,4 +20,3 @@ output "dns_zone_name_keyvault" {
   value       = module.private_dns.private_dns_zone_names.key_vault
   description = "The name of dns zone."
 }
-

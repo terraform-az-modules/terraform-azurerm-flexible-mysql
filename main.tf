@@ -34,7 +34,7 @@ resource "random_password" "main" {
 ##-----------------------------------------------------------------------------
 resource "azurerm_mysql_flexible_server" "main" {
   count                             = var.enabled ? 1 : 0
-  name                              = var.mysql_server_name != null ? var.mysql_server_name : format("%s-mysql-flexible-server", module.labels.id)
+  name                              = var.resource_position_prefix ? format("mysql-flexible-server-%s", local.name) : format("%s-mysql-flexible-server", local.name)
   resource_group_name               = var.resource_group_name
   location                          = var.location
   administrator_login               = var.admin_username
@@ -96,27 +96,6 @@ resource "azurerm_mysql_flexible_server" "main" {
   tags    = var.custom_tags == null ? module.labels.tags : var.custom_tags
 }
 
-#--------------------------------
-resource "azurerm_private_endpoint" "example" {
-  name                = format("%s-pe", azurerm_mysql_flexible_server.main[0].name)
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  subnet_id           = var.subnet_id
-
-  private_service_connection {
-    name                           = format("%s-pe-serviceconnection", azurerm_mysql_flexible_server.main[0].name)
-    private_connection_resource_id = azurerm_mysql_flexible_server.main[0].id
-    subresource_names              = ["mysqlServer"]
-    is_manual_connection           = false
-  }
-
-  private_dns_zone_group {
-    name                 = "mysqlserver-dns-zone-group"
-    private_dns_zone_ids = [var.private_dns_zone_ids]
-  }
-}
-#----------------------------------
-
 ##-----------------------------------------------------------------------------
 ## Below resource will create MySQL server Active Directory administrator.
 ##-----------------------------------------------------------------------------
@@ -159,7 +138,7 @@ resource "azurerm_mysql_flexible_server_configuration" "main" {
 ##-----------------------------------------------------------------------------
 resource "azurerm_monitor_diagnostic_setting" "mysql" {
   count                          = var.enabled && var.enable_diagnostic ? 1 : 0
-  name                           = format("%s-mysql-diagnostic-log", module.labels.id)
+  name                           = var.resource_position_prefix ? format("mysql-diagnostic-log-%s", local.name) : format("%s-mysql-diagnostic-log", local.name)
   target_resource_id             = azurerm_mysql_flexible_server.main[0].id
   log_analytics_workspace_id     = var.log_analytics_workspace_id
   storage_account_id             = var.storage_account_id
@@ -187,7 +166,7 @@ resource "azurerm_monitor_diagnostic_setting" "mysql" {
 ##-----------------------------------------------------------------------------
 resource "azurerm_user_assigned_identity" "primary_cmk_umi" {
   count               = var.cmk_enabled ? 1 : 0
-  name                = format("%s-cmk-primary-identity", module.labels.id)
+  name                = var.resource_position_prefix ? format("cmk-primary-identity-%s", local.name) : format("%s-cmk-primary-identity", local.name)
   resource_group_name = var.resource_group_name
   location            = var.location
   tags                = module.labels.tags
@@ -198,7 +177,7 @@ resource "azurerm_user_assigned_identity" "primary_cmk_umi" {
 ##-----------------------------------------------------------------------------
 resource "azurerm_key_vault_key" "primary_cmk_key" {
   count           = var.cmk_enabled ? 1 : 0
-  name            = format("%s-cmk-key", module.labels.id)
+  name            = var.resource_position_prefix ? format("cmk-key-%s", local.name) : format("%s-cmk-key", local.name)
   key_vault_id    = var.key_vault_id
   key_type        = var.cmk_key_type
   key_size        = var.cmk_key_size
@@ -212,7 +191,7 @@ resource "azurerm_key_vault_key" "primary_cmk_key" {
 ##-----------------------------------------------------------------------------
 resource "azurerm_key_vault_key" "geo_cmk_key" {
   count           = var.geo_redundant_backup_enabled && var.cmk_enabled ? 1 : 0
-  name            = format("%s-geo-cmk-key", module.labels.id)
+  name            = var.resource_position_prefix ? format("geo-cmk-key-%s", local.name) : format("%s-geo-cmk-key", local.name)
   key_vault_id    = var.key_vault_id
   key_type        = var.cmk_key_type
   key_size        = var.cmk_key_size

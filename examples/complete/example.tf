@@ -86,7 +86,7 @@ module "log-analytics" {
 module "vault" {
   source                        = "terraform-az-modules/key-vault/azure"
   version                       = "1.0.0"
-  name                          = "coreuse"
+  name                          = "core"
   environment                   = "dev"
   label_order                   = ["name", "environment", "location"]
   resource_group_name           = module.resource_group.resource_group_name
@@ -162,6 +162,4 @@ module "flexible-mysql" {
   key_vault_id               = module.vault.id
   key_vault_with_rbac        = true
   cmk_enabled                = true
-  subnet_id                  = module.subnet.subnet_ids.subnet2
-  private_dns_zone_ids       = module.private_dns.private_dns_zone_ids.mysql_server
 }
