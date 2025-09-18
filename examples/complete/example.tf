@@ -136,16 +136,16 @@ module "private_dns" {
 ## Flexible Mysql server module call.
 ##-----------------------------------------------------------------------------
 module "flexible-mysql" {
-  depends_on                 = [module.resource_group, module.vnet, module.vault]
-  source                     = "../../"
-  name                       = "core"
-  environment                = "dev"
-  resource_group_name        = module.resource_group.resource_group_name
-  location                   = module.resource_group.resource_group_location
-  virtual_network_id         = module.vnet.vnet_id
-  delegated_subnet_id        = module.subnet.subnet_ids.subnet1
-  mysql_version              = "8.0.21"
-  private_dns                = true
+  depends_on          = [module.resource_group, module.vnet, module.vault]
+  source              = "../../"
+  name                = "core"
+  environment         = "dev"
+  resource_group_name = module.resource_group.resource_group_name
+  location            = module.resource_group.resource_group_location
+  # virtual_network_id         = module.vnet.vnet_id
+  delegated_subnet_id = module.subnet.subnet_ids.subnet1
+  mysql_version       = "8.0.21"
+  # private_dns                = true
   zone                       = "1"
   admin_username             = "mysqlusername"
   admin_password             = "ba5yatgfgfhdsv6A3ns2lu4gqzzc"

@@ -1,4 +1,3 @@
-
 data "azurerm_client_config" "current" {}
 ##-----------------------------------------------------------------------------
 ## Tagging Module – Applies standard tags to all resources
@@ -26,7 +25,7 @@ resource "random_password" "main" {
   min_upper   = 4
   min_lower   = 2
   min_numeric = 4
-  special     = false
+  special     = var.enable_special_char
 }
 
 ##-----------------------------------------------------------------------------
