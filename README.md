@@ -175,6 +175,17 @@ This table contains both Prerequisites and Providers:
 | <a name="output_azurerm_mysql_flexible_server_configuration_id"></a> [azurerm\_mysql\_flexible\_server\_configuration\_id](#output\_azurerm\_mysql\_flexible\_server\_configuration\_id) | The ID of the MySQL Flexible Server Configuration. |
 | <a name="output_mysql_flexible_server_id"></a> [mysql\_flexible\_server\_id](#output\_mysql\_flexible\_server\_id) | The ID of the MySQL Flexible Server. |
 
+
+### Skipped Checkov Checks
+
+| Check ID         | Description / Purpose                                                          |
+|------------------|-------------------------------------------------------------------------------|
+| CKV_TF_1         | Ensures Terraform module sources use commit hash for Git-based sources         |
+| CKV2_AZURE_56    | Requires resource group to have a managed identity assigned                    |
+| CKV_AZURE_112    | Validates use of customer-managed keys for resource encryption                 |
+| CKV_AZURE_40     | Checks Storage Account default network access rules security                   |
+
+
 <!-- 
 ## Module Dependencies
 
@@ -193,8 +204,6 @@ This module has dependencies on:
 ## 📑 Changelog
 
 Refer [here](CHANGELOG.md).
-
-
 
 
 ## ✨ Contributors

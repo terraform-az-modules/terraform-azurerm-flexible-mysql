@@ -57,7 +57,7 @@ variable "label_order" {
 
 variable "repository" {
   type        = string
-  default     = "https://github.com/terraform-az-modules/terraform-azure-vnet"
+  default     = "https://github.com/terraform-az-modules/terraform-azure-flexible-mysql"
   description = "Module source repository URL."
 
   validation {
@@ -90,11 +90,6 @@ variable "existing_private_dns_zone" {
   description = "Set to true if using an existing private DNS zone."
 }
 
-variable "registration_enabled" {
-  type        = bool
-  default     = false
-  description = "Enable auto-registration of VM records in the Private DNS zone."
-}
 
 ##-----------------------------------------------------------------------------
 ## MySQL Flexible Server Variables
@@ -190,12 +185,6 @@ variable "private_dns" {
   description = "Enable private DNS integration."
 }
 
-variable "main_rg_name" {
-  type        = string
-  default     = ""
-  description = "Primary resource group name."
-}
-
 variable "resource_group_name" {
   type        = string
   default     = ""
@@ -206,12 +195,6 @@ variable "existing_private_dns_zone_id" {
   type        = string
   default     = null
   description = "ID of the existing private DNS zone."
-}
-
-variable "existing_private_dns_zone_name" {
-  type        = string
-  default     = null
-  description = "Name of the existing private DNS zone (no trailing dot). Changing forces replacement."
 }
 
 variable "auto_grow_enabled" {
@@ -227,8 +210,8 @@ variable "iops" {
 }
 
 variable "size_gb" {
-  type        = string
-  default     = "20"
+  type        = number
+  default     = 20
   description = "Maximum storage size in GB; valid range 20 to 16,384."
 }
 
@@ -377,12 +360,6 @@ variable "entra_authentication" {
   description = "Azure Entra authentication configuration for MySQL Flexible Server."
 }
 
-variable "mysql_server_name" {
-  type        = string
-  default     = null
-  description = "Name of the MySQL Flexible Server."
-}
-
 variable "key_opts" {
   type        = list(string)
   default     = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
@@ -401,3 +378,8 @@ variable "role_definition_name" {
   description = "Name of the Role Definition assigned for Key Vault crypto operations."
 }
 
+variable "expiration_date" {
+  type        = string
+  default     = "2034-05-22T18:29:59Z"
+  description = "Expiration UTC datetime (Y-m-d'T'H:M:S'Z')"
+}

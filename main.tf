@@ -18,7 +18,6 @@ module "labels" {
 ## Random Password Resource.
 ## Will be passed as admin password of mysql server when admin password is not passed manually as variable.
 ##-----------------------------------------------------------------------------
-
 resource "random_password" "main" {
   count       = var.admin_password == null ? 1 : 0
   length      = var.admin_password_length
@@ -32,15 +31,14 @@ resource "random_password" "main" {
 ## Below resource will create flexible MySQL server in Azure environment.
 ##-----------------------------------------------------------------------------
 resource "azurerm_mysql_flexible_server" "main" {
-  count                  = var.enabled ? 1 : 0
-  name                   = var.mysql_server_name != null ? var.mysql_server_name : format("%s-mysql-flexible-server", module.labels.id)
-  resource_group_name    = var.resource_group_name
-  location               = var.location
-  administrator_login    = var.admin_username
-  administrator_password = var.admin_password == null ? random_password.main[0].result : var.admin_password
-  backup_retention_days  = var.backup_retention_days
-  delegated_subnet_id    = var.delegated_subnet_id
-  # private_dns_zone_id              = var.private_dns ? azurerm_private_dns_zone.main[0].id : var.existing_private_dns_zone_id
+  count                             = var.enabled ? 1 : 0
+  name                              = var.resource_position_prefix ? format("pgsql-fs-%s", local.name) : format("%s-pgsql-fs", local.name)
+  resource_group_name               = var.resource_group_name
+  location                          = var.location
+  administrator_login               = var.admin_username
+  administrator_password            = var.admin_password == null ? random_password.main[0].result : var.admin_password
+  backup_retention_days             = var.backup_retention_days
+  delegated_subnet_id               = var.delegated_subnet_id
   private_dns_zone_id               = var.existing_private_dns_zone_id
   sku_name                          = var.sku_name
   create_mode                       = var.create_mode
@@ -64,21 +62,14 @@ resource "azurerm_mysql_flexible_server" "main" {
   }
 
   dynamic "identity" {
-    for_each = toset(var.identity_type != null ? [var.identity_type] : [])
+    for_each = var.identity_type != null || var.cmk_enabled ? [1] : []
     content {
-      type         = var.identity_type
-      identity_ids = var.identity_type == "UserAssigned" ? var.user_assigned_identity_ids : []
-    }
-  }
-
-  dynamic "identity" {
-    for_each = var.cmk_enabled ? [true] : []
-    content {
-      type = "UserAssigned"
-      identity_ids = flatten([
-        [azurerm_user_assigned_identity.primary_cmk_umi[0].id],
-        var.geo_redundant_backup_enabled ? [azurerm_user_assigned_identity.geo_cmk_umi[0].id] : []
-      ])
+      type = var.cmk_enabled ? "UserAssigned" : var.identity_type
+      identity_ids = distinct(concat(
+        var.identity_type == "UserAssigned" ? var.user_assigned_identity_ids : [],
+        var.cmk_enabled ? [azurerm_user_assigned_identity.primary_cmk_umi[0].id] : [],
+        var.cmk_enabled && var.geo_redundant_backup_enabled ? [azurerm_user_assigned_identity.geo_cmk_umi[0].id] : []
+      ))
     }
   }
 
@@ -102,7 +93,7 @@ resource "azurerm_mysql_flexible_server" "main" {
 ## Below resource will create MySQL server Active Directory administrator.
 ##-----------------------------------------------------------------------------
 resource "azurerm_mysql_flexible_server_active_directory_administrator" "main" {
-  count       = length(var.entra_authentication.object_id[*]) > 0 ? 1 : 0
+  count       = var.entra_authentication.object_id != null ? 1 : 0
   depends_on  = [azurerm_mysql_flexible_server.main]
   server_id   = join("", azurerm_mysql_flexible_server.main[*].id)
   identity_id = var.entra_authentication.user_assigned_identity_id
@@ -115,7 +106,7 @@ resource "azurerm_mysql_flexible_server_active_directory_administrator" "main" {
 ## Below resource will create MySQL flexible database.
 ##-----------------------------------------------------------------------------
 resource "azurerm_mysql_flexible_database" "main" {
-  count               = var.enabled ? 1 : 0
+  count               = var.enabled && var.db_name != "" ? 1 : 0
   name                = var.db_name
   resource_group_name = var.resource_group_name
   server_name         = azurerm_mysql_flexible_server.main[0].name
@@ -140,7 +131,7 @@ resource "azurerm_mysql_flexible_server_configuration" "main" {
 ##-----------------------------------------------------------------------------
 resource "azurerm_monitor_diagnostic_setting" "mysql" {
   count                          = var.enabled && var.enable_diagnostic ? 1 : 0
-  name                           = format("%s-mysql-diagnostic-log", module.labels.id)
+  name                           = var.resource_position_prefix ? format("mysql-diagnostic-log-%s", local.name) : format("%s-mysql-diagnostic-log", local.name)
   target_resource_id             = azurerm_mysql_flexible_server.main[0].id
   log_analytics_workspace_id     = var.log_analytics_workspace_id
   storage_account_id             = var.storage_account_id
@@ -169,7 +160,7 @@ resource "azurerm_monitor_diagnostic_setting" "mysql" {
 ##-----------------------------------------------------------------------------
 resource "azurerm_user_assigned_identity" "primary_cmk_umi" {
   count               = var.cmk_enabled ? 1 : 0
-  name                = format("%s-cmk-primary-identity", module.labels.id)
+  name                = var.resource_position_prefix ? format("cmk-primary-identity-%s", local.name) : format("%s-cmk-primary-identity", local.name)
   resource_group_name = var.resource_group_name
   location            = var.location
 }
@@ -178,22 +169,24 @@ resource "azurerm_user_assigned_identity" "primary_cmk_umi" {
 ## Below resource will create primary Customer Managed Key (CMK) key vault key.
 ##-----------------------------------------------------------------------------
 resource "azurerm_key_vault_key" "primary_cmk_key" {
-  count        = var.cmk_enabled ? 1 : 0
-  name         = format("%s-cmk-key", module.labels.id)
-  key_vault_id = var.key_vault_id
-  key_type     = var.cmk_key_type
-  key_size     = var.cmk_key_size
-  key_opts     = var.key_opts
+  count           = var.cmk_enabled ? 1 : 0
+  name            = var.resource_position_prefix ? format("s-cmk-key-%s", local.name) : format("%s-s-cmk-key", local.name)
+  key_vault_id    = var.key_vault_id
+  key_type        = var.cmk_key_type
+  key_size        = var.cmk_key_size
+  key_opts        = var.key_opts
+  expiration_date = var.expiration_date
 }
 
 ##-----------------------------------------------------------------------------
 ## Below resource will create geo-redundant Customer Managed Key (CMK) key vault key.
 ##-----------------------------------------------------------------------------
 resource "azurerm_key_vault_key" "geo_cmk_key" {
-  count        = var.geo_redundant_backup_enabled && var.cmk_enabled ? 1 : 0
-  name         = format("%s-geo-cmk-key", module.labels.id)
-  key_vault_id = var.key_vault_id
-  key_type     = var.cmk_key_type
-  key_size     = var.cmk_key_size
-  key_opts     = var.key_opts
+  count           = var.geo_redundant_backup_enabled && var.cmk_enabled ? 1 : 0
+  name            = var.resource_position_prefix ? format("geo-cmk-key-%s", local.name) : format("%s-geo-cmk-key", local.name)
+  key_vault_id    = var.key_vault_id
+  key_type        = var.cmk_key_type
+  key_size        = var.cmk_key_size
+  key_opts        = var.key_opts
+  expiration_date = var.expiration_date
 }
