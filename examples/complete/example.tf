@@ -9,8 +9,8 @@ data "azurerm_client_config" "current_client_config" {}
 ## Resource group in which all resources will be deployed.
 ##-----------------------------------------------------------------------------
 module "resource_group" {
-  source      = "terraform-az-modules/resource-group/azure"
-  version     = "1.0.0"
+  source      = "terraform-az-modules/resource-group/azurerm"
+  version     = "1.0.3"
   name        = "core"
   environment = "dev"
   location    = "centralindia"
@@ -21,8 +21,8 @@ module "resource_group" {
 # Virtual Network
 # ------------------------------------------------------------------------------
 module "vnet" {
-  source              = "terraform-az-modules/vnet/azure"
-  version             = "1.0.0"
+  source              = "terraform-az-modules/vnet/azurerm"
+  version             = "1.0.3"
   name                = "core"
   environment         = "dev"
   label_order         = ["name", "environment", "location"]
@@ -35,8 +35,8 @@ module "vnet" {
 # Subnet
 # ------------------------------------------------------------------------------
 module "subnet" {
-  source               = "terraform-az-modules/subnet/azure"
-  version              = "1.0.0"
+  source               = "terraform-az-modules/subnet/azurerm"
+  version              = "1.0.1"
   environment          = "dev"
   label_order          = ["name", "environment", "location"]
   resource_group_name  = module.resource_group.resource_group_name
@@ -69,8 +69,8 @@ module "subnet" {
 # Log Analytics
 # ------------------------------------------------------------------------------
 module "log-analytics" {
-  source                      = "terraform-az-modules/log-analytics/azure"
-  version                     = "1.0.0"
+  source                      = "terraform-az-modules/log-analytics/azurerm"
+  version                     = "1.0.2"
   name                        = "core"
   environment                 = "dev"
   label_order                 = ["name", "environment", "location"]
@@ -84,8 +84,8 @@ module "log-analytics" {
 # Key Vault
 # ------------------------------------------------------------------------------
 module "vault" {
-  source                        = "terraform-az-modules/key-vault/azure"
-  version                       = "1.0.0"
+  source                        = "terraform-az-modules/key-vault/azurerm"
+  version                       = "1.0.1"
   name                          = "core"
   environment                   = "dev"
   label_order                   = ["name", "environment", "location"]
@@ -114,8 +114,8 @@ module "vault" {
 ## Private DNS Zone module call
 ##-----------------------------------------------------------------------------
 module "private_dns" {
-  source              = "terraform-az-modules/private-dns/azure"
-  version             = "1.0.0"
+  source              = "terraform-az-modules/private-dns/azurerm"
+  version             = "1.0.2"
   location            = module.resource_group.resource_group_location
   name                = "dns"
   environment         = "dev"
