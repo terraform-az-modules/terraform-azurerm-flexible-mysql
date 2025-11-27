@@ -5,7 +5,7 @@
 #
 
 # Name of this project
-name : Terraform Azure Private DNS
+name : Terraform Azure Flexible MySQL
 
 # License of this project
 license: "APACHE"

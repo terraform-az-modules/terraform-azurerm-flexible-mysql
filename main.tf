@@ -39,7 +39,7 @@ resource "azurerm_mysql_flexible_server" "main" {
   administrator_password            = var.admin_password == null ? random_password.main[0].result : var.admin_password
   backup_retention_days             = var.backup_retention_days
   delegated_subnet_id               = var.delegated_subnet_id
-  private_dns_zone_id               = var.private_dns_id
+  private_dns_zone_id               = var.vnet_integration_private_dns_zone_id
   sku_name                          = var.sku_name
   create_mode                       = var.create_mode
   geo_redundant_backup_enabled      = var.geo_redundant_backup_enabled
@@ -220,7 +220,7 @@ resource "azurerm_private_endpoint" "pep" {
   }
   private_dns_zone_group {
     name                 = var.resource_position_prefix ? format("mysql-dns-zone-group-%s", local.name) : format("%s-mysql-dns-zone-group", local.name)
-    private_dns_zone_ids = [var.private_dns_zone_id]
+    private_dns_zone_ids = [var.private_endpoint_dns_zone_id]
   }
   lifecycle {
     ignore_changes = [

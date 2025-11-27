@@ -3,9 +3,7 @@
 ##-----------------------------------------------------------------------------
 locals {
   name = var.custom_name != null ? var.custom_name : module.labels.id
-}
 
-locals {
   flattened_rules = {
     for rule_name, ip_ranges in var.firewall_rules :
     rule_name => [
@@ -19,5 +17,3 @@ locals {
   }
   all_firewall_rules = flatten([for r in local.flattened_rules : r])
 }
-
-

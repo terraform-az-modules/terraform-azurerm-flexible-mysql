@@ -193,14 +193,8 @@ variable "source_server_id" {
 
 variable "resource_group_name" {
   type        = string
-  default     = ""
+  default     = "rg-flexible-mysql"
   description = "Resource group name where MySQL Flexible Server is deployed."
-}
-
-variable "virtual_network_id" {
-  type        = string
-  description = "The name of the virtual network"
-  default     = ""
 }
 
 variable "auto_grow_enabled" {
@@ -310,7 +304,7 @@ variable "eventhub_authorization_rule_id" {
 
 variable "cmk_enabled" {
   type        = bool
-  default     = true
+  default     = false
   description = "Enable Customer Managed Key (CMK) for encryption."
 }
 
@@ -338,12 +332,6 @@ variable "key_vault_with_rbac" {
   description = "Enable RBAC permissions on the Key Vault."
 }
 
-variable "custom_tags" {
-  type        = map(string)
-  default     = {}
-  description = "Map of custom tags to apply to resources."
-}
-
 variable "identity_type" {
   type        = string
   default     = null
@@ -358,7 +346,6 @@ variable "user_assigned_identity_ids" {
 
 variable "entra_authentication" {
   type = object({
-    # user_assigned_identity_id = optional(string, null)
     login     = optional(string, null)
     object_id = optional(string, null)
   })
@@ -396,13 +383,13 @@ variable "private_endpoint_subnet_id" {
   description = "The subnet ID where the private endpoint will be deployed"
 }
 
-variable "private_dns_zone_id" {
+variable "vnet_integration_private_dns_zone_id" {
   type        = string
   default     = null
   description = "The ID of the Private DNS Zone to associate with the MySql Flexible Server."
 }
 
-variable "private_dns_id" {
+variable "private_endpoint_dns_zone_id" {
   type        = string
   default     = null
   description = "The ID of the Private DNS Zone to associate with the MySql Flexible Server,when private endpoint is enabled."
@@ -410,9 +397,8 @@ variable "private_dns_id" {
 
 variable "enable_private_endpoint" {
   type        = bool
-  default     = true
+  default     = false
   description = "Manages a Private Endpoint to Azure database for MySql"
-
 }
 
 variable "public_network_access_enabled" {
@@ -432,7 +418,7 @@ variable "firewall_rules" {
     start_ip = string
     end_ip   = string
   })))
-  default     = null
+  default     = {}
   description = "Map of firewall rule names to lists of IP ranges"
   #for example we can pass multiple ip ranges like this
   #  {
