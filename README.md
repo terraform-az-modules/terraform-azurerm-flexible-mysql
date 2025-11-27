@@ -32,10 +32,10 @@
 <a href='https://www.instagram.com/cloud_drove?igsh=cHJqaDY3bGtnYmh3' title="Follow On Instagram">
   <img src="https://github.com/gauravghongde/social-icons/blob/master/SVG/Color/Instagram.svg" width="23" height="23" />
 </a>
-<a href='https://www.linkedin.com/shareArticle?mini=true&title=Terraform+Module+Template&url=https://github.com/clouddrove/terraform-azure-flexible-mysql'>
+<a href='https://www.linkedin.com/shareArticle?mini=true&title=Terraform+Azure+Flexible+MySQL&url=https://github.com/clouddrove/terraform-azure-flexible-mysql'>
   <img title="Share on LinkedIn" src="https://user-images.githubusercontent.com/50652676/62817742-4e339e80-bb59-11e9-87b9-a1f68cae1049.png" />
 </a>
-<a href='https://twitter.com/intent/tweet/?text=Terraform+Module+Template&url=https://github.com/clouddrove/terraform-azure-flexible-mysql'>
+<a href='https://twitter.com/intent/tweet/?text=Terraform+Azure+Flexible+MySQL&url=https://github.com/clouddrove/terraform-azure-flexible-mysql'>
   <img title="Share on Twitter" src="https://user-images.githubusercontent.com/50652676/62817740-4c69db00-bb59-11e9-8a79-3580fbbf6d5c.png" />
 </a>
 
@@ -154,7 +154,7 @@ This table contains both Prerequisites and Providers:
 | <a name="input_private_dns"></a> [private\_dns](#input\_private\_dns) | Enable private DNS integration. | `bool` | `false` | no |
 | <a name="input_registration_enabled"></a> [registration\_enabled](#input\_registration\_enabled) | Enable auto-registration of VM records in the Private DNS zone. | `bool` | `false` | no |
 | <a name="input_replication_role"></a> [replication\_role](#input\_replication\_role) | Replication role for the MySQL Flexible Server (e.g., 'None'). | `string` | `null` | no |
-| <a name="input_repository"></a> [repository](#input\_repository) | Module source repository URL. | `string` | `"https://github.com/terraform-az-modules/terraform-azure-vnet"` | no |
+| <a name="input_repository"></a> [repository](#input\_repository) | Module source repository URL. | `string` | `"https://github.com/terraform-az-modules/terraform-azurerm-flexible-mysql"` | no |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | Resource group name where MySQL Flexible Server is deployed. | `string` | `""` | no |
 | <a name="input_resource_position_prefix"></a> [resource\_position\_prefix](#input\_resource\_position\_prefix) | Controls placement of the resource type keyword (e.g., "vnet", "ddospp") in resource names.<br><br>- If true, the keyword is prepended: "vnet-core-dev".<br>- If false, the keyword is appended: "core-dev-vnet".<br><br>Maintains naming consistency based on organizational preferences. | `bool` | `true` | no |
 | <a name="input_role_definition_name"></a> [role\_definition\_name](#input\_role\_definition\_name) | Name of the Role Definition assigned for Key Vault crypto operations. | `string` | `"Key Vault Crypto Service Encryption User"` | no |

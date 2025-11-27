@@ -11,7 +11,7 @@ data "azurerm_client_config" "current_client_config" {}
 module "resource_group" {
   source      = "terraform-az-modules/resource-group/azurerm"
   version     = "1.0.3"
-  name        = "core"
+  name        = "core2"
   environment = "dev"
   location    = "centralindia"
   label_order = ["name", "environment", "location"]
@@ -23,7 +23,7 @@ module "resource_group" {
 module "vnet" {
   source              = "terraform-az-modules/vnet/azurerm"
   version             = "1.0.3"
-  name                = "core"
+  name                = "core2"
   environment         = "dev"
   label_order         = ["name", "environment", "location"]
   resource_group_name = module.resource_group.resource_group_name
@@ -71,7 +71,7 @@ module "subnet" {
 module "log-analytics" {
   source                      = "terraform-az-modules/log-analytics/azurerm"
   version                     = "1.0.2"
-  name                        = "core"
+  name                        = "core2"
   environment                 = "dev"
   label_order                 = ["name", "environment", "location"]
   log_analytics_workspace_sku = "PerGB2018"
@@ -86,7 +86,7 @@ module "log-analytics" {
 module "vault" {
   source                        = "terraform-az-modules/key-vault/azurerm"
   version                       = "1.0.1"
-  name                          = "core121"
+  name                          = "core112"
   environment                   = "dev"
   label_order                   = ["name", "environment", "location"]
   resource_group_name           = module.resource_group.resource_group_name
@@ -144,7 +144,6 @@ module "flexible-mysql" {
   resource_group_name        = module.resource_group.resource_group_name
   location                   = module.resource_group.resource_group_location
   virtual_network_id         = module.vnet.vnet_id
-  delegated_subnet_id        = module.subnet.subnet_ids["subnet1"]
   mysql_version              = "8.0.21"
   admin_username             = "mysqlusername"
   sku_name                   = "B_Standard_B1ms"
@@ -153,6 +152,11 @@ module "flexible-mysql" {
   key_vault_id               = module.vault.id
   key_vault_with_rbac        = true
   cmk_enabled                = true
-  private_dns_id             = module.private_dns.private_dns_zone_ids.mysql_server
-  enable_private_endpoint    = false
+  private_dns_zone_id        = module.private_dns.private_dns_zone_ids.mysql_server
+  private_endpoint_subnet_id = module.subnet.subnet_ids.subnet2
+  enable_private_endpoint    = true
+  entra_authentication = {
+    login     = "test-db"
+    object_id = data.azurerm_client_config.current_client_config.client_id
+  }
 }

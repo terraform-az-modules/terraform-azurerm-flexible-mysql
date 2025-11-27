@@ -84,13 +84,6 @@ variable "enabled" {
   description = "Set to false to disable resource creation by this module."
 }
 
-variable "existing_private_dns_zone" {
-  type        = bool
-  default     = false
-  description = "Set to true if using an existing private DNS zone."
-}
-
-
 ##-----------------------------------------------------------------------------
 ## MySQL Flexible Server Variables
 ##-----------------------------------------------------------------------------
@@ -113,6 +106,31 @@ variable "admin_password_length" {
   description = "Length of the randomly generated admin password, if not provided."
 }
 
+variable "min_upper" {
+  description = "Minimum number of uppercase letters in the generated password."
+  type        = number
+  default     = 4
+}
+
+variable "min_lower" {
+  description = "Minimum number of lowercase letters in the generated password."
+  type        = number
+  default     = 2
+}
+
+variable "min_numeric" {
+  description = "Minimum number of numeric characters in the generated password."
+  type        = number
+  default     = 4
+}
+
+variable "special" {
+  description = "Whether to include special characters in the generated password."
+  type        = bool
+  default     = false
+}
+
+
 variable "backup_retention_days" {
   type        = number
   default     = 7
@@ -121,7 +139,7 @@ variable "backup_retention_days" {
 
 variable "delegated_subnet_id" {
   type        = string
-  default     = ""
+  default     = null
   description = "Resource ID of the delegated subnet."
 }
 
@@ -139,7 +157,7 @@ variable "create_mode" {
 
 variable "geo_redundant_backup_enabled" {
   type        = bool
-  default     = true
+  default     = false
   description = "Enable geo redundant backups. Changing this triggers resource replacement."
 }
 
@@ -157,7 +175,7 @@ variable "mysql_version" {
 
 variable "zone" {
   type        = number
-  default     = null
+  default     = 1
   description = "Availability Zone for the server (1, 2, or 3)."
 }
 
@@ -173,33 +191,21 @@ variable "source_server_id" {
   description = "Source server ID for restore or replication modes."
 }
 
-variable "virtual_network_id" {
-  type        = string
-  default     = ""
-  description = "Virtual network resource ID."
-}
-
-variable "private_dns" {
-  type        = bool
-  default     = false
-  description = "Enable private DNS integration."
-}
-
 variable "resource_group_name" {
   type        = string
   default     = ""
   description = "Resource group name where MySQL Flexible Server is deployed."
 }
 
-variable "existing_private_dns_zone_id" {
+variable "virtual_network_id" {
   type        = string
-  default     = null
-  description = "ID of the existing private DNS zone."
+  description = "The name of the virtual network"
+  default     = ""
 }
 
 variable "auto_grow_enabled" {
   type        = bool
-  default     = false
+  default     = true
   description = "Enable storage auto-grow (default disabled)."
 }
 
@@ -223,25 +229,25 @@ variable "db_name" {
 
 variable "charset" {
   type        = string
-  default     = ""
+  default     = "utf8mb3"
   description = "Charset for the MySQL database."
 }
 
 variable "collation" {
   type        = string
-  default     = ""
+  default     = "utf8mb3_unicode_ci"
   description = "Collation for the MySQL database."
 }
 
 variable "server_configuration_names" {
   type        = list(string)
-  default     = []
+  default     = ["interactive_timeout", "audit_log_enabled", "audit_log_events"]
   description = "List of MySQL server configuration option names."
 }
 
 variable "values" {
   type        = list(string)
-  default     = []
+  default     = ["600", "ON", "CONNECTION,ADMIN,DDL,TABLE_ACCESS"]
   description = "List of values corresponding to server configuration names."
 }
 
@@ -304,7 +310,7 @@ variable "eventhub_authorization_rule_id" {
 
 variable "cmk_enabled" {
   type        = bool
-  default     = false
+  default     = true
   description = "Enable Customer Managed Key (CMK) for encryption."
 }
 
@@ -352,9 +358,9 @@ variable "user_assigned_identity_ids" {
 
 variable "entra_authentication" {
   type = object({
-    user_assigned_identity_id = optional(string, null)
-    login                     = optional(string, null)
-    object_id                 = optional(string, null)
+    # user_assigned_identity_id = optional(string, null)
+    login     = optional(string, null)
+    object_id = optional(string, null)
   })
   default     = {}
   description = "Azure Entra authentication configuration for MySQL Flexible Server."
@@ -380,6 +386,62 @@ variable "role_definition_name" {
 
 variable "expiration_date" {
   type        = string
-  default     = "2034-05-22T18:29:59Z"
+  default     = null
   description = "Expiration UTC datetime (Y-m-d'T'H:M:S'Z')"
+}
+
+variable "private_endpoint_subnet_id" {
+  type        = string
+  default     = null
+  description = "The subnet ID where the private endpoint will be deployed"
+}
+
+variable "private_dns_zone_id" {
+  type        = string
+  default     = null
+  description = "The ID of the Private DNS Zone to associate with the MySql Flexible Server."
+}
+
+variable "private_dns_id" {
+  type        = string
+  default     = null
+  description = "The ID of the Private DNS Zone to associate with the MySql Flexible Server,when private endpoint is enabled."
+}
+
+variable "enable_private_endpoint" {
+  type        = bool
+  default     = true
+  description = "Manages a Private Endpoint to Azure database for MySql"
+
+}
+
+variable "public_network_access_enabled" {
+  type        = bool
+  default     = true
+  description = "Defines whether public access is allowed."
+}
+
+variable "enable_firewall" {
+  type        = bool
+  default     = false
+  description = "Enable firewall rule creation"
+}
+
+variable "firewall_rules" {
+  type = map(list(object({
+    start_ip = string
+    end_ip   = string
+  })))
+  default     = null
+  description = "Map of firewall rule names to lists of IP ranges"
+  #for example we can pass multiple ip ranges like this
+  #  {
+  #     "AllowSubnetRange" = [
+  #       { start_ip = "10.0.1.0", end_ip = "10.0.1.255" },
+  #       { start_ip = "10.0.2.0", end_ip = "10.0.2.255" }
+  #     ]
+  #     "AllowOfficeIP" = [
+  #       { start_ip = "203.0.113.5", end_ip = "203.0.113.5" }
+  #     ]
+  #   } 
 }
