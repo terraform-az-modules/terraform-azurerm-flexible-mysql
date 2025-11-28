@@ -196,7 +196,7 @@ This table contains both Prerequisites and Providers:
 | CKV2_AZURE_56    | Requires resource group to have a managed identity assigned                    |
 | CKV_AZURE_112    | Validates use of customer-managed keys for resource encryption                 |
 | CKV_AZURE_40     | Checks Storage Account default network access rules security                   |
-
+| CKV_AZURE_94     | Geo-redundant backups intentionally disabled on this Azure MySQL Flexible Server. Locally redundant backups with retention policy provide adequate data protection and point-in-time recovery for this workload in a single region, avoiding unnecessary cross-region storage costs and latency.
 
 <!-- 
 ## Module Dependencies
