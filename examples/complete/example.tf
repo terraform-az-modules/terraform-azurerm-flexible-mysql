@@ -154,4 +154,5 @@ module "flexible-mysql" {
   cmk_enabled                          = true
   vnet_integration_private_dns_zone_id = module.private_dns.private_dns_zone_ids.mysql_server
   enable_private_endpoint              = false
+  public_network_access                = "Disabled"
 }

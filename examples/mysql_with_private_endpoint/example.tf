@@ -11,7 +11,7 @@ data "azurerm_client_config" "current_client_config" {}
 module "resource_group" {
   source      = "terraform-az-modules/resource-group/azurerm"
   version     = "1.0.3"
-  name        = "core2"
+  name        = "core"
   environment = "dev"
   location    = "centralindia"
   label_order = ["name", "environment", "location"]
@@ -23,7 +23,7 @@ module "resource_group" {
 module "vnet" {
   source              = "terraform-az-modules/vnet/azurerm"
   version             = "1.0.3"
-  name                = "core2"
+  name                = "core"
   environment         = "dev"
   label_order         = ["name", "environment", "location"]
   resource_group_name = module.resource_group.resource_group_name
@@ -71,7 +71,7 @@ module "subnet" {
 module "log-analytics" {
   source                      = "terraform-az-modules/log-analytics/azurerm"
   version                     = "1.0.2"
-  name                        = "core2"
+  name                        = "core"
   environment                 = "dev"
   label_order                 = ["name", "environment", "location"]
   log_analytics_workspace_sku = "PerGB2018"
@@ -86,7 +86,7 @@ module "log-analytics" {
 module "vault" {
   source                        = "terraform-az-modules/key-vault/azurerm"
   version                       = "1.0.1"
-  name                          = "core112"
+  name                          = "core"
   environment                   = "dev"
   label_order                   = ["name", "environment", "location"]
   resource_group_name           = module.resource_group.resource_group_name
@@ -154,6 +154,7 @@ module "flexible-mysql" {
   private_endpoint_dns_zone_id = module.private_dns.private_dns_zone_ids.mysql_server
   private_endpoint_subnet_id   = module.subnet.subnet_ids.subnet2
   enable_private_endpoint      = true
+  public_network_access        = "Disabled"
   entra_authentication = {
     login     = "test-db"
     object_id = data.azurerm_client_config.current_client_config.client_id

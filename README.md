@@ -161,6 +161,7 @@ This table contains both Prerequisites and Providers:
 | <a name="input_private_endpoint_dns_zone_id"></a> [private\_endpoint\_dns\_zone\_id](#input\_private\_endpoint\_dns\_zone\_id) | The ID of the Private DNS Zone to associate with the MySql Flexible Server,when private endpoint is enabled. | `string` | `null` | no |
 | <a name="input_private_endpoint_subnet_id"></a> [private\_endpoint\_subnet\_id](#input\_private\_endpoint\_subnet\_id) | The subnet ID where the private endpoint will be deployed | `string` | `null` | no |
 | <a name="input_public_network_access_enabled"></a> [public\_network\_access\_enabled](#input\_public\_network\_access\_enabled) | Defines whether public access is allowed. | `bool` | `true` | no |
+| <a name="input_public_network_access"></a> [public\_network\_access](#input\_public\_network\_access\_enabled) | Defines whether public access is allowed for resources. | `string` | `Enabled` | no |
 | <a name="input_replication_role"></a> [replication\_role](#input\_replication\_role) | Replication role for the MySQL Flexible Server (e.g., 'None'). | `string` | `null` | no |
 | <a name="input_repository"></a> [repository](#input\_repository) | Module source repository URL. | `string` | `"https://github.com/terraform-az-modules/terraform-azure-flexible-mysql"` | no |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | Resource group name where MySQL Flexible Server is deployed. | `string` | `"rg-flexible-mysql"` | no |

@@ -43,6 +43,7 @@ resource "azurerm_mysql_flexible_server" "main" {
   sku_name                          = var.sku_name
   create_mode                       = var.create_mode
   geo_redundant_backup_enabled      = var.geo_redundant_backup_enabled
+  public_network_access             = var.public_network_access
   point_in_time_restore_time_in_utc = var.create_mode == "PointInTimeRestore" ? var.point_in_time_restore_time_in_utc : null
   replication_role                  = var.replication_role
   source_server_id                  = var.create_mode == "PointInTimeRestore" ? var.source_server_id : null
@@ -69,7 +70,7 @@ resource "azurerm_mysql_flexible_server" "main" {
       type = var.cmk_enabled ? "UserAssigned" : var.identity_type
       identity_ids = distinct(concat(
         var.identity_type == "UserAssigned" ? var.user_assigned_identity_ids : [],
-        var.cmk_enabled ? [azurerm_user_assigned_identity.primary_cmk_umi[0].id] : [],
+        var.cmk_enabled ? [azurerm_user_assigned_identity.main[0].id] : [],
         var.cmk_enabled && var.geo_redundant_backup_enabled ? [azurerm_user_assigned_identity.geo_cmk_umi[0].id] : []
       ))
     }
@@ -78,8 +79,8 @@ resource "azurerm_mysql_flexible_server" "main" {
   dynamic "customer_managed_key" {
     for_each = var.cmk_enabled ? [true] : []
     content {
-      key_vault_key_id                     = azurerm_key_vault_key.primary_cmk_key[0].id
-      primary_user_assigned_identity_id    = azurerm_user_assigned_identity.primary_cmk_umi[0].id
+      key_vault_key_id                     = azurerm_key_vault_key.main[0].id
+      primary_user_assigned_identity_id    = azurerm_user_assigned_identity.main[0].id
       geo_backup_key_vault_key_id          = var.geo_redundant_backup_enabled ? azurerm_key_vault_key.geo_cmk_key[0].id : null
       geo_backup_user_assigned_identity_id = var.geo_redundant_backup_enabled ? azurerm_user_assigned_identity.geo_cmk_umi[0].id : null
     }
@@ -92,8 +93,8 @@ resource "azurerm_mysql_flexible_server" "main" {
 ##-----------------------------------------------------------------------------
 ## Below resource will create firewall rules for MySql server
 ##-----------------------------------------------------------------------------
-resource "azurerm_mysql_flexible_server_firewall_rule" "rules" {
-  for_each            = var.enabled && var.enable_firewall ? { for rule in local.all_firewall_rules : rule.name => rule } : {}
+resource "azurerm_mysql_flexible_server_firewall_rule" "main" {
+  for_each            = var.enabled && var.enable_firewall && var.public_network_access != "Disabled" ? { for rule in local.all_firewall_rules : rule.name => rule } : {}
   name                = each.value.name
   resource_group_name = var.resource_group_name
   server_name         = azurerm_mysql_flexible_server.main[0].name
@@ -108,7 +109,7 @@ resource "azurerm_mysql_flexible_server_active_directory_administrator" "main" {
   count       = var.entra_authentication.object_id != null ? 1 : 0
   depends_on  = [azurerm_mysql_flexible_server.main]
   server_id   = join("", azurerm_mysql_flexible_server.main[*].id)
-  identity_id = azurerm_user_assigned_identity.primary_cmk_umi[0].id
+  identity_id = azurerm_user_assigned_identity.main[0].id
   login       = var.entra_authentication.login
   object_id   = var.entra_authentication.object_id
   tenant_id   = data.azurerm_client_config.current.tenant_id
@@ -141,7 +142,7 @@ resource "azurerm_mysql_flexible_server_configuration" "main" {
 ##-----------------------------------------------------------------------------
 ## Below resource will create diagnostic settings for MySQL flexible server.
 ##-----------------------------------------------------------------------------
-resource "azurerm_monitor_diagnostic_setting" "mysql" {
+resource "azurerm_monitor_diagnostic_setting" "main" {
   count                          = var.enabled && var.enable_diagnostic ? 1 : 0
   name                           = var.resource_position_prefix ? format("mysql-diag-log-%s", local.name) : format("%s-mysql-diag-log", local.name)
   target_resource_id             = azurerm_mysql_flexible_server.main[0].id
@@ -169,9 +170,9 @@ resource "azurerm_monitor_diagnostic_setting" "mysql" {
 ##-----------------------------------------------------------------------------
 ## Below resource will create user assigned identity for primary CMK.
 ##-----------------------------------------------------------------------------
-resource "azurerm_user_assigned_identity" "primary_cmk_umi" {
+resource "azurerm_user_assigned_identity" "main" {
   count               = var.enabled && var.cmk_enabled ? 1 : 0
-  name                = var.resource_position_prefix ? format("cmk-primary-identity-%s", local.name) : format("%s-cmk-primary-identity", local.name)
+  name                = var.resource_position_prefix ? format("cmk-umi-%s", local.name) : format("%s-cmk-umi", local.name)
   resource_group_name = var.resource_group_name
   location            = var.location
 }
@@ -179,9 +180,9 @@ resource "azurerm_user_assigned_identity" "primary_cmk_umi" {
 ##-----------------------------------------------------------------------------
 ## Below resource will create primary Customer Managed Key (CMK) key vault key.
 ##-----------------------------------------------------------------------------
-resource "azurerm_key_vault_key" "primary_cmk_key" {
+resource "azurerm_key_vault_key" "main" {
   count           = var.enabled && var.cmk_enabled ? 1 : 0
-  name            = var.resource_position_prefix ? format("s-cmk-key-%s", local.name) : format("%s-s-cmk-key", local.name)
+  name            = var.resource_position_prefix ? format("cmk-key-%s", local.name) : format("%s-cmk-key", local.name)
   key_vault_id    = var.key_vault_id
   key_type        = var.cmk_key_type
   key_size        = var.cmk_key_size
@@ -205,7 +206,7 @@ resource "azurerm_key_vault_key" "geo_cmk_key" {
 ##-----------------------------------------------------------------------------
 ## Private Endpoint 
 ##-----------------------------------------------------------------------------
-resource "azurerm_private_endpoint" "pep" {
+resource "azurerm_private_endpoint" "main" {
   count               = var.enabled && var.enable_private_endpoint ? 1 : 0
   name                = var.resource_position_prefix ? format("mysql-pe-%s", local.name) : format("%s-mysql-pe", local.name)
   location            = var.location
@@ -219,7 +220,7 @@ resource "azurerm_private_endpoint" "pep" {
     subresource_names              = ["mysqlServer"]
   }
   private_dns_zone_group {
-    name                 = var.resource_position_prefix ? format("mysql-dns-zone-group-%s", local.name) : format("%s-mysql-dns-zone-group", local.name)
+    name                 = var.resource_position_prefix ? format("mysql-dzg-%s", local.name) : format("%s-mysql-dzg", local.name)
     private_dns_zone_ids = [var.private_endpoint_dns_zone_id]
   }
   lifecycle {

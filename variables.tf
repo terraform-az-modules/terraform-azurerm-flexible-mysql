@@ -235,7 +235,7 @@ variable "collation" {
 
 variable "server_configuration_names" {
   type        = list(string)
-  default     = ["interactive_timeout", "audit_log_enabled", "audit_log_events"]
+  default     = []
   description = "List of MySQL server configuration option names."
 }
 
@@ -405,6 +405,12 @@ variable "public_network_access_enabled" {
   type        = bool
   default     = true
   description = "Defines whether public access is allowed."
+}
+
+variable "public_network_access" {
+  type        = string
+  default     = "Enabled"
+  description = "Specifies the level of public network access allowed for the resource."
 }
 
 variable "enable_firewall" {
