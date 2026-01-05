@@ -401,12 +401,6 @@ variable "enable_private_endpoint" {
   description = "Manages a Private Endpoint to Azure database for MySql"
 }
 
-variable "public_network_access_enabled" {
-  type        = bool
-  default     = true
-  description = "Defines whether public access is allowed."
-}
-
 variable "public_network_access" {
   type        = string
   default     = "Enabled"
