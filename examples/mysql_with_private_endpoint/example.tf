@@ -136,23 +136,27 @@ module "private_dns" {
 ## Flexible Mysql server module call.
 ##-----------------------------------------------------------------------------
 module "flexible-mysql" {
-  depends_on                           = [module.resource_group, module.vnet, module.vault]
-  source                               = "../../"
-  name                                 = "core"
-  environment                          = "dev"
-  label_order                          = ["name", "environment", "location"]
-  resource_group_name                  = module.resource_group.resource_group_name
-  location                             = module.resource_group.resource_group_location
-  delegated_subnet_id                  = module.subnet.subnet_ids["subnet1"]
-  mysql_version                        = "8.0.21"
-  admin_username                       = "mysqlusername"
-  sku_name                             = "B_Standard_B1ms"
-  db_name                              = "maindb"
-  log_analytics_workspace_id           = module.log-analytics.workspace_id
-  key_vault_id                         = module.vault.id
-  key_vault_with_rbac                  = true
-  cmk_enabled                          = true
-  vnet_integration_private_dns_zone_id = module.private_dns.private_dns_zone_ids.mysql_server
-  enable_private_endpoint              = false
-  public_network_access                = "Disabled"
+  depends_on                   = [module.resource_group, module.vnet, module.vault]
+  source                       = "../../"
+  name                         = "core"
+  environment                  = "dev"
+  label_order                  = ["name", "environment", "location"]
+  resource_group_name          = module.resource_group.resource_group_name
+  location                     = module.resource_group.resource_group_location
+  mysql_version                = "8.0.21"
+  admin_username               = "mysqlusername"
+  sku_name                     = "B_Standard_B1ms"
+  db_name                      = "maindb"
+  log_analytics_workspace_id   = module.log-analytics.workspace_id
+  key_vault_id                 = module.vault.id
+  key_vault_with_rbac          = true
+  cmk_enabled                  = true
+  private_endpoint_dns_zone_id = module.private_dns.private_dns_zone_ids.mysql_server
+  private_endpoint_subnet_id   = module.subnet.subnet_ids.subnet2
+  enable_private_endpoint      = true
+  public_network_access        = "Disabled"
+  entra_authentication = {
+    login     = "test-db"
+    object_id = data.azurerm_client_config.current_client_config.client_id
+  }
 }
