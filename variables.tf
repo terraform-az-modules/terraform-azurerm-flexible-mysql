@@ -403,7 +403,7 @@ variable "enable_private_endpoint" {
 
 variable "public_network_access" {
   type        = string
-  default     = "Enabled"
+  default     = "Disabled"
   description = "Specifies the level of public network access allowed for the resource."
 }
 
