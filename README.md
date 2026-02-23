@@ -265,8 +265,3 @@ Write to us at [hello@clouddrove.com](hello@clouddrove.com).
   [email]: <>
   [github]: https://github.com/terraform-az-modules
   [terraform_modules]: https://github.com/orgs/terraform-az-modules/repositories
-
-## Security Notes
-
-Examples are aligned to secure defaults (`public_network_access = "Disabled"` and private DNS/private endpoint patterns).
-For public deployments, opt out explicitly by setting `public_network_access = "Enabled"` and configuring firewall rules with least privilege.
