@@ -17,4 +17,8 @@ terraform {
       version = "~> 3.8.0"
     }
   }
+
+  provider_meta "azurerm" {
+    module_name = "terraform-az-modules/terraform-azurerm-flexible-mysql"
+  }
 }
