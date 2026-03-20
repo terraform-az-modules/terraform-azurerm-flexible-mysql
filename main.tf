@@ -204,7 +204,7 @@ resource "azurerm_key_vault_key" "geo_cmk_key" {
 }
 
 ##-----------------------------------------------------------------------------
-## Private Endpoint 
+## Private Endpoint
 ##-----------------------------------------------------------------------------
 resource "azurerm_private_endpoint" "main" {
   count               = var.enabled && var.enable_private_endpoint ? 1 : 0
