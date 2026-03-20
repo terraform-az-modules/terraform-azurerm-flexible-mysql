@@ -15,7 +15,7 @@ jobs:
   mysql_with_private_endpoint-example:
     uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@88efd7724e007c8f721a219498be29e0c9ad471b
     with:
-      working_directory: './examples/mysql_with_private_endpoint/'  
+      working_directory: './examples/mysql_with_private_endpoint/'
       provider: none
 # Seperate Job for TFlint workflow call
   tf-lint:
