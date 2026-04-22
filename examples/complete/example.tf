@@ -115,7 +115,7 @@ module "vault" {
 ##-----------------------------------------------------------------------------
 module "private_dns" {
   source              = "terraform-az-modules/private-dns/azurerm"
-  version             = "1.0.5"
+  version             = "1.0.6"
   location            = module.resource_group.resource_group_location
   name                = "dns"
   environment         = "dev"
