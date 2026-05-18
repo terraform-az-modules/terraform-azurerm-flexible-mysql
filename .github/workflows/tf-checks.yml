@@ -7,13 +7,13 @@ on:
 jobs:
 # Update 'Job name' and 'working_directory' as needed based on the module structure.
   complete-example:
-    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@01bb3f58f407d2a5d70e492c41276938670a6570
+    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@55e9697c9ab5a4a7e13de6bb4818a8a2cd4123f6
     with:
       working_directory: './examples/complete/'
       provider: none
 
   mysql_with_private_endpoint-example:
-    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@01bb3f58f407d2a5d70e492c41276938670a6570
+    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@55e9697c9ab5a4a7e13de6bb4818a8a2cd4123f6
     with:
       working_directory: './examples/mysql_with_private_endpoint/'
       provider: none
